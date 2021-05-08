@@ -52,13 +52,31 @@ public class ImageScraper {
 	public ArrayList<String> getImageLinks(ArrayList<String> postLinks) {
 		ArrayList <String>imageLinks = new ArrayList<>();
 		for(String post: postLinks) {
-			try {
-				Document postDoc = Jsoup.connect(post).get();
-				Element postImage = postDoc.selectFirst("");
-				String link = postImage.attr("href");
-				imageLinks.add(link);
-			}catch(Exception e) {
-				e.printStackTrace();
+			if(post.startsWith("/r")) {	
+				try {
+					String getUrl = "https://old.reddit.com"+post;
+					//System.out.println("Looking for images in: "+ getUrl);
+					Document postDoc = Jsoup.connect(getUrl).get();
+					Elements postImageList = postDoc.select("div.media-preview-content > a[href].may-blank ");
+					String link;
+					if(postImageList != null)
+						for(Element i : postImageList) {
+							link=i.attr("href");
+							if(link!=null)
+								imageLinks.add(link);
+						}
+					else
+						link="";
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else if(post.endsWith(".jpg")||post.endsWith(".png")) {
+				imageLinks.add(post);
+			}
+			else {
+				//do nothing?
+				
 			}
 		}
 		return imageLinks;
@@ -69,10 +87,19 @@ public class ImageScraper {
 	 * @return 0 means successfully downloaded all files in the image links.
 	 */
 	public int downloadImages(ArrayList <String> imageLinks) {
+		
+		
 		return 0;
 	}
 	public static void main(String args[]) {
 		ImageScraper x = new ImageScraper();
-		x.getPostUrls();
+		ArrayList <String>urls = x.getPostUrls();
+		ArrayList <String> imgLinks = x.getImageLinks(urls);
+		System.out.println("imageLinks::::");
+		for(String s : imgLinks) {
+			System.out.println(s);
+		}
+		
+		
 	}
 }

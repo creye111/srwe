@@ -1,12 +1,13 @@
 package srwpe;
 
+import java.awt.Image;
 import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
+import javax.imageio.Ima;
 public class ImageScraper {
 	private String url;
 	private String defaultUrl="https://old.reddit.com/r/EarthPorn/top/";
@@ -87,7 +88,7 @@ public class ImageScraper {
 	 * @return 0 means successfully downloaded all files in the image links.
 	 */
 	public int downloadImages(ArrayList <String> imageLinks) {
-		
+		Image img = null;
 		
 		return 0;
 	}

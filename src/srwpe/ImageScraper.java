@@ -1,13 +1,19 @@
 package srwpe;
 
 import java.awt.Image;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import javax.imageio.Ima;
+///import javax.imageio.Image;
 public class ImageScraper {
 	private String url;
 	private String defaultUrl="https://old.reddit.com/r/EarthPorn/top/";
@@ -86,10 +92,57 @@ public class ImageScraper {
 	 * Downloads all url sources given their urls.
 	 * @param imageLinks: ArrayList <String> of urls.
 	 * @return 0 means successfully downloaded all files in the image links.
+	 * @throws Exception 
 	 */
-	public int downloadImages(ArrayList <String> imageLinks) {
+	public int downloadImages(ArrayList <String> imageLinks) throws Exception {
 		Image img = null;
+		String ext = ".jpg";
+		int counter =0;
+		String fileName = "image";
 		
+		for(String s:imageLinks) {
+			URL url = new URL(s);
+			if(s.endsWith(".jpg")) {
+				ext = ".jpg";
+				int res =downloadImage(url,fileName+counter+ext);
+				
+			}
+			else if(s.endsWith(".png")){
+				ext = ".png";
+				int res =downloadImage(url,fileName+counter+ext);
+			}
+			else {
+				//do nothing
+				System.err.print("Invalid file extension for " + s);
+			}
+			counter++;
+			
+		}
+		return 0;
+	}
+	public int downloadImage(URL src,String fileName) throws IOException {
+		InputStream is = src.openStream();
+		OutputStream os = new FileOutputStream(fileName);
+		byte[] i = new byte[2048];
+		int len;
+		try {
+			while((len = is.read(i))!=-1) {
+				os.write(i,0,len);
+			}
+			is.close();
+			os.close();
+			return 0;
+		}catch(Exception e) {
+			return 1;
+		}
+	}
+	public int scrapeImages() {
+		try {
+			downloadImages(getImageLinks(getPostUrls()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return 0;
 	}
 	public static void main(String args[]) {

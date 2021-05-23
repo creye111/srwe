@@ -5,5 +5,6 @@ module SubredditWallpaperEngine {
 	requires javafx.fxml;
 	requires java.desktop;
 	requires org.jsoup;
+	requires org.junit.jupiter.api;
 	exports srwpe;
 }

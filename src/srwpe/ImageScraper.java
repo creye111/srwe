@@ -16,7 +16,7 @@ import org.jsoup.select.Elements;
 ///import javax.imageio.Image;
 public class ImageScraper {
 	private String url;
-	private String defaultUrl="https://old.reddit.com/r/EarthPorn/top/";
+	private String defaultUrl="https://old.reddit.com/r/wallpapers/top/";
 	private String defaultCSSQuery="a[class='title may-blank'],[data-event-action='title']";
 	private String downloadPath;
 	
@@ -25,7 +25,22 @@ public class ImageScraper {
 	}
 	
 	public ImageScraper(String url) {
-		this.url = url;
+		if(url.startsWith("https://www.reddit.com")) {
+			this.url =url.replace("https://www.reddit.com", "https://old.reddit.com");
+			
+		}
+		else if(url.startsWith("www.reddit.com")) {
+			this.url =url.replace("www.reddit.com", "https://old.reddit.com");
+		
+		}
+		else if(url.startsWith("reddit.com")) {
+			this.url =url.replace("reddit.com", "https://old.reddit.com");
+		}
+		else {
+			this.url = url;
+		}
+		System.out.println("URL="+this.url);
+		
 	}
 	/**
 	 * Scrapes a sub-reddit's top posts for the day and returns an ArrayList of URLs as Strings.
@@ -57,33 +72,36 @@ public class ImageScraper {
 	 * @return
 	 */
 	public ArrayList<String> getImageLinks(ArrayList<String> postLinks) {
-		ArrayList <String>imageLinks = new ArrayList<>();
-		for(String post: postLinks) {
-			if(post.startsWith("/r")) {	
-				try {
-					String getUrl = "https://old.reddit.com"+post;
-					//System.out.println("Looking for images in: "+ getUrl);
-					Document postDoc = Jsoup.connect(getUrl).get();
-					Elements postImageList = postDoc.select("div.media-preview-content > a[href].may-blank ");
-					String link;
-					if(postImageList != null)
-						for(Element i : postImageList) {
-							link=i.attr("href");
-							if(link!=null)
-								imageLinks.add(link);
-						}
-					else
-						link="";
-				}catch(Exception e) {
-					e.printStackTrace();
+		ArrayList <String>imageLinks=null;
+		if(postLinks != null) {
+			imageLinks = new ArrayList<>();
+			for(String post: postLinks) {
+				if(post.startsWith("/r")) {	
+					try {
+						String getUrl = "https://old.reddit.com"+post;
+						//System.out.println("Looking for images in: "+ getUrl);
+						Document postDoc = Jsoup.connect(getUrl).get();
+						Elements postImageList = postDoc.select("div.media-preview-content > a[href].may-blank ");
+						String link;
+						if(postImageList != null)
+							for(Element i : postImageList) {
+								link=i.attr("href");
+								if(link!=null)
+									imageLinks.add(link);
+							}
+						else
+							link="";
+					}catch(Exception e) {
+						e.printStackTrace();
+					}
 				}
-			}
-			else if(post.endsWith(".jpg")||post.endsWith(".png")) {
-				imageLinks.add(post);
-			}
-			else {
-				//do nothing?
-				
+				else if(post.endsWith(".jpg")||post.endsWith(".png")) {
+					imageLinks.add(post);
+				}
+				else {
+					//do nothing?
+					
+				}
 			}
 		}
 		return imageLinks;
@@ -99,24 +117,28 @@ public class ImageScraper {
 		String ext = ".jpg";
 		int counter =0;
 		String fileName = "image";
-		
-		for(String s:imageLinks) {
-			URL url = new URL(s);
-			if(s.endsWith(".jpg")) {
-				ext = ".jpg";
-				int res =downloadImage(url,fileName+counter+ext);
+		if(imageLinks!=null) {
+			for(String s:imageLinks) {
+				URL url = new URL(s);
+				if(s.endsWith(".jpg")) {
+					ext = ".jpg";
+					int res =downloadImage(url,fileName+counter+ext);
+					
+				}
+				else if(s.endsWith(".png")){
+					ext = ".png";
+					int res =downloadImage(url,fileName+counter+ext);
+				}
+				else {
+					//do nothing
+					System.err.print("Invalid file extension for " + s);
+				}
+				counter++;
 				
 			}
-			else if(s.endsWith(".png")){
-				ext = ".png";
-				int res =downloadImage(url,fileName+counter+ext);
-			}
-			else {
-				//do nothing
-				System.err.print("Invalid file extension for " + s);
-			}
-			counter++;
-			
+		}
+		else {
+			return 1;
 		}
 		return 0;
 	}

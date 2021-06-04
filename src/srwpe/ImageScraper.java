@@ -46,7 +46,7 @@ public class ImageScraper {
 	 * Scrapes a sub-reddit's top posts for the day and returns an ArrayList of URLs as Strings.
 	 * @return
 	 */
-	public ArrayList<String> getPostUrls() {
+	private ArrayList<String> getPostUrls() {
 		ArrayList  <String>postUrls= new ArrayList<>();
 		try {
 			Document subredditHTML = Jsoup.connect(url).get();
@@ -71,7 +71,7 @@ public class ImageScraper {
 	 * @param postLinks
 	 * @return
 	 */
-	public ArrayList<String> getImageLinks(ArrayList<String> postLinks) {
+	private ArrayList<String> getImageLinks(ArrayList<String> postLinks) {
 		ArrayList <String>imageLinks=null;
 		if(postLinks != null) {
 			imageLinks = new ArrayList<>();
@@ -112,7 +112,7 @@ public class ImageScraper {
 	 * @return 0 means successfully downloaded all files in the image links.
 	 * @throws Exception 
 	 */
-	public int downloadImages(ArrayList <String> imageLinks) throws Exception {
+	private int downloadImages(ArrayList <String> imageLinks) throws Exception {
 		Image img = null;
 		String ext = ".jpg";
 		int counter =0;
@@ -142,7 +142,7 @@ public class ImageScraper {
 		}
 		return 0;
 	}
-	public int downloadImage(URL src,String fileName) throws IOException {
+	private int downloadImage(URL src,String fileName) throws IOException {
 		InputStream is = src.openStream();
 		OutputStream os = new FileOutputStream(fileName);
 		byte[] i = new byte[2048];

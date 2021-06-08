@@ -160,12 +160,12 @@ public class ImageScraper {
 	}
 	public int scrapeImages() {
 		try {
-			downloadImages(getImageLinks(getPostUrls()));
+			return downloadImages(getImageLinks(getPostUrls()));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return 1;
 		}
-		return 0;
 	}
 	public static void main(String args[]) {
 		ImageScraper x = new ImageScraper();
